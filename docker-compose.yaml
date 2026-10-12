@@ -1,0 +1,50 @@
+services:
+  qdrant:
+    image: qdrant/qdrant # Specifies the Qdrant image to use
+    container_name: qdrant # Sets the container name to qdrant
+    networks:
+      - kyzo_net
+    ports:
+      - "6333:6333" # Maps port 6333 on the host to port 6333 in the container
+    volumes:
+      - qdrant_data:/qdrant/storage # Mounts the qdrant_data volume to /qdrant/storage in the container
+
+  app:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    networks:
+      - kyzo_net
+    ports:
+      - "8081:8081"
+    environment:
+      - PORT=8081
+      - LOG_LEVEL=INFO
+      - QDRANT_CLIENT=http://qdrant:6333
+      - OLLAMA=http://localhost:12434
+      #- LLM_BASE_URL=http://localhost:12434
+    env_file:
+      - .env
+    restart: no
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    depends_on:
+      - qdrant
+    volumes:
+      - ./app:/app
+      - ./document:/app/document
+      - ./document_expert:/app/document_expert
+
+volumes:
+  qdrant_data: # Defines the qdrant_data volume
+
+networks:
+    kyzo_net:
+        name: kyzo_net
+        driver: bridge

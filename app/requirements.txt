@@ -1,0 +1,14 @@
+Flask==2.3.3
+requests==2.32.5
+python-dotenv==1.0.0
+Flask-Caching==2.0.2
+Flask-Limiter==3.3.1
+flask-swagger-ui==4.11.1
+gunicorn==21.2.0
+qdrant-client==1.15.1
+fastembed==0.7.3
+langchain==0.3.27
+langchain_core==0.3.76
+langchain_community==0.3.29
+langchain_qdrant==0.2.1
+pypdf==6.1.1
